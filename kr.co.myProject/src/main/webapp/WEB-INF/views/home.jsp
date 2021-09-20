@@ -94,6 +94,7 @@ createUrl = () => {
 }
 
 // 유튜브 크롤링
+/* 
 crawling = (httpYoutubeLinkCreate) => {
         $.ajax({
                 // url은 임시로 사용
@@ -111,7 +112,24 @@ crawling = (httpYoutubeLinkCreate) => {
                 }
         })
 }
-
+*/
+crawling = (httpYoutubeLinkCreate) => {
+    $.ajax({
+            // url은 임시로 사용
+            url : '/youtube2/api/getvideoinfo/'+httpYoutubeLinkCreate,
+            type : 'GET',
+            dataType : 'json',
+            timeout : 1000,  // 단위 ms
+            async : false,
+            success : (data) => {
+            	console.log(data);
+            	console.log(data.videoInfo[0].Title+'\n'+data.videoInfo[0].Thumbnail+'\n'+data.videoInfo[0].Description);
+                kakao_title = data.videoInfo[0].Title;
+                kakao_img = data.videoInfo[0].Thumbnail;
+                kakao_description = data.videoInfo[0].Description;
+            }
+    })
+}
 
 //Kakao.init('d02fd05af201f3eee3c8edac91f3cc16');
 Kakao.init('35687c5740a2dedb01492077acb5b4c9');
