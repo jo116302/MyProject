@@ -38,7 +38,7 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 	@Value("${youtube.key}")
 	private String PROPERTIES_FILENAME;
 	*/
-	public static String PROPERTIES_FILENAME="youtube.key2";
+	public static String PROPERTIES_FILENAME="youtube.key1";
 
 	/** Global instance of the HTTP transport. */
 	private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
