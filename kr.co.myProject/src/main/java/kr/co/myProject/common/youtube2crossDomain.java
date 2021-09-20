@@ -28,8 +28,7 @@ public class youtube2crossDomain implements Filter {
 		res.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT"); 
 		res.setHeader("Access-Control-Max-Age", "3600"); 
 		res.setHeader("Access-Control-Allow-Headers", "x-requested-with, origin, content-type, accept"); 
-		chain.doFilter(request, res); 
-		
+		chain.doFilter(request, res); 		
 	}
 
 	@Override
