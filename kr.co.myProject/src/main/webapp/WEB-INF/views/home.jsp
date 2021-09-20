@@ -64,6 +64,10 @@
 	}
 }
 
+.moreYoutubeListButton {
+	-webkit-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
 </style>
 
 
@@ -228,6 +232,7 @@ selOptionButton = async () => {
 				youtubelistHtml += '</li>';
 			}
 			youtubelistHtml += '</ul>';
+			youtubelistHtml += '<div id="moreYoutubeListButton" class="moreYoutubeListButton" onclick="moreYoutubeList()"><svg width="100%" height="100%" viewBox="0 0 18 18" fit="" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M4.288 11.632a.965.965 0 0 1 0-1.375l4.017-3.972a.99.99 0 0 1 1.39 0l4.017 3.972a.965.965 0 0 1 0 1.375l-.084.083a.99.99 0 0 1-1.39 0L9 8.515l-3.237 3.2a.99.99 0 0 1-1.39 0l-.085-.083z" fill-rule="evenodd"></path></svg></div>';
 		}
 		
 		$('#youtubelist').append(youtubelistHtml);
@@ -298,6 +303,5 @@ $(() => {
 	</select>
 	<div id="selOptionButton" onclick="selOptionButton()">조회</div>
 	<div id="youtubelist"></div>
-	<div id="moreYoutubeListButton" onclick="moreYoutubeList()">∨</div>
 </body>
 </html>
