@@ -80,7 +80,7 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 			search.setOrder("date");
 			search.setType("video");
 
-			search.setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/high/url)");
+			search.setFields("items(id/kind,id/videoId,snippet/title,snippet/description,snippet/thumbnails/high/url)");
 			search.setMaxResults(NUMBER_OF_VIDEOS_RETURNED);
 			SearchListResponse searchResponse = search.execute();
 
