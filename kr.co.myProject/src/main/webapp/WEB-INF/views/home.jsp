@@ -194,7 +194,7 @@ function getParameter(param) {
 playListAjax = async (channelId) => {
     const result = await $.ajax({
         // url은 임시로 사용
-        url : 'http://localhost:8080/youtube2/api/playlist/'+channelId,
+        url : '/youtube2/api/playlist/'+channelId,
         type : 'GET',
         dataType : 'json',
         timeout : 2000,  // 단위 ms
@@ -243,7 +243,6 @@ selOptionButton = async () => {
 			$('#moreYoutubeListButton').show();
 		}
 	});
-	
 }
 
 moreYoutubeList = () => {
@@ -258,7 +257,22 @@ moreYoutubeList = () => {
 	if(youtubeListCount == 50) {
 		$('#moreYoutubeListButton').hide();
 	}
-}
+}	
+$(() => {
+	console.log(window.location.href);
+	console.log(window.location.hostname);
+	console.log(window.location.pathname);
+	console.log(window.location.protocol);
+	
+	console.log($(location).attr('host')); 
+	console.log($(location).attr('hostname')); 
+	console.log($(location).attr('pathname')); 
+	console.log($(location).attr('href')); 
+	console.log($(location).attr('port')); 
+	console.log($(location).attr('protocol')); 
+})
+
+
 </script>
 <body class="text-center">
 
@@ -277,7 +291,7 @@ moreYoutubeList = () => {
 			<div class="mt-5 mb-3 text-muted" id="createUrlPrint"></div>
 		</form>
 	</main>
-	
+
 	<select id="youtubeChannel" name="youtubeChannel">
 		<option value="UC9Rzd-bAdxTcDNOmgeOBCTg">수원삼일교회</option>
 		<option value="UC1v6BgyI1_n8_oNVR5dKriw">수원삼일교회TV</option>

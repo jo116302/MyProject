@@ -59,7 +59,6 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 	private Environment environment;		// 빈 주입을 받습니다.
 
     private String getUtil(String key){
-    	System.out.println("test getUtil : "+key);
         return environment.getProperty(key);
     }
 
