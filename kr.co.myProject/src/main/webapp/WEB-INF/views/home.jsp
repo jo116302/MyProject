@@ -63,6 +63,7 @@
 		font-size: 3.5rem;
 	}
 }
+
 </style>
 
 
@@ -71,10 +72,12 @@
 </head>
 
 <script type="text/javascript">
+let youtubeListCount = 10;
+
 createUrl = () => {
    let httpYoutubeLinkCreate = getParameter('v');
    crawling(httpYoutubeLinkCreate);
-   let printUrl = '<br />유튜브 원클릭 주소가 복사 되었습니다.<br />' + '<div id="link">http://youtube2.kr/homezy/?y=' + httpYoutubeLinkCreate + '</div>' + '<span class="sociallink ml-1"><a href="javascript:KakaoToalk_Share()" id="KakaoToalk_Share" title="카카오톡으로 공유"><img src="http://youtube2.kr/y/kakao_li_2.png" alt="" width="300" height="45" /></a></span>';
+   let printUrl = '<br />유튜브 원클릭 주소가 복사 되었습니다.<br />' + '<div id="link">http://youtube2.kr/homezy/?y=' + httpYoutubeLinkCreate + '</div>' + '<span class="sociallink ml-1"><a href="javascript:KakaoToalk_Share(\'\')" id="KakaoToalk_Share" title="카카오톡으로 공유"><img src="http://youtube2.kr/y/kakao_li_2.png" alt="" width="300" height="45" /></a></span>';
 
    if (httpYoutubeLinkCreate == '') {
       document.getElementById('youtubeUrl').focus();
@@ -90,7 +93,7 @@ createUrl = () => {
 crawling = (httpYoutubeLinkCreate) => {
         $.ajax({
                 // url은 임시로 사용
-                url : 'http://34.135.199.229:8080/youtubeCrawling.jsp',
+                url : 'http://35.226.140.4:8080/youtubeCrawling.jsp',
                 type : 'POST',
                 data : {id : httpYoutubeLinkCreate},
                 dataType : 'json',
@@ -106,13 +109,20 @@ crawling = (httpYoutubeLinkCreate) => {
 }
 
 
-Kakao.init('d02fd05af201f3eee3c8edac91f3cc16');
+//Kakao.init('d02fd05af201f3eee3c8edac91f3cc16');
+Kakao.init('35687c5740a2dedb01492077acb5b4c9');
 let kakao_img = 'http://youtube2.kr/y/logo2.jpg';
 let kakao_title = '라이브 예배실황';
 let kakao_description = '온라인 예배';
 
-KakaoToalk_Share = () => {
-    let youtubeLink = document.getElementById('link').textContent;
+KakaoToalk_Share = (link) => {
+	let youtubeLink = '';
+	if (link.length == 0) {
+		youtubeLink = document.getElementById('link').textContent;
+	} else {
+		youtubeLink = 'http://youtube2.kr/homezy/?y='+link;
+	}
+    
     Kakao.Link.sendDefault({
         objectType : 'feed',
         content : {
@@ -192,25 +202,62 @@ playListAjax = async (channelId) => {
 	return result.videoinfo;
 }
 
-selOptionButton = () => {
+KakaoTalk_Share_Trigger = (Title, Description, Thumbnail, Video_id) => {
+	kakao_title = Title;
+	kakao_description = Description;
+	kakao_img = Thumbnail;
+	
+	KakaoToalk_Share(Video_id);
+}
+
+selOptionButton = async () => {
+	youtubeListCount = 10;
 	$('#youtubelist').empty();
 	const channelId = $('select[name=youtubeChannel]').val();
-	playListAjax(channelId).then((result) => {
+	await playListAjax(channelId).then((result) => {
 		let youtubelistHtml = '';
 		if (result.length > 0) {
 			youtubelistHtml += '<ul id="youtubeListUl">';
 			
 			for (let idx=0; idx < result.length; idx++) {
 				youtubelistHtml += '<li>';
-				youtubelistHtml += '<div id="thumbnail"><img src="'+result[idx].Thumbnail+'" height="100px"></div>';
-				youtubelistHtml += '<div id="description"><strong>'+result[idx].Title+'</strong>'+(result[idx].Description !=null ? '<br />'+result[idx].Description : '')+'</div>';
+				youtubelistHtml += '<a id="KakaoToalk_Share" onclick="KakaoTalk_Share_Trigger(\''+result[idx].Title+'\', \''+(result[idx].Description !=null ? result[idx].Description : '')+'\', \''+result[idx].Thumbnail+'\', \''+result[idx].Video_Id+'\')">';
+				youtubelistHtml += '<div id="thumbnail" class="thumbnail_sel"><img src="'+result[idx].Thumbnail+'" height="100px"></div>';
+				youtubelistHtml += '<div id="description" class="description_sel"><strong>'+result[idx].Title+'</strong>'+(result[idx].Description !=null ? '<br />'+result[idx].Description : '')+'</div>';
+				youtubelistHtml += '</a>'; 
 				youtubelistHtml += '</li>';
 			}
 			youtubelistHtml += '</ul>';
 		}
 		
 		$('#youtubelist').append(youtubelistHtml);
+	}).then(() => {
+		$("#youtubeListUl li").each((index, item) => {
+			console.log(item);
+			if (index >= youtubeListCount) {
+				$(item).hide();
+			}
+		});
+		
+		if(youtubeListCount != 50) {
+			$('#moreYoutubeListButton').show();
+		}
 	});
+	
+}
+
+moreYoutubeList = () => {
+	$("#youtubeListUl li").each((index, item) => {
+		console.log('test : '+index >= youtubeListCount && youtubeListCount+10 >= index);
+		if (index >= youtubeListCount && youtubeListCount+10 >= index) {
+			$(item).show();
+		}
+	});
+		
+	youtubeListCount = youtubeListCount + 10;
+	if(youtubeListCount == 50) {
+		$('#moreYoutubeListButton').hide();
+	}
 }
 </script>
 <body class="text-center">
@@ -237,5 +284,6 @@ selOptionButton = () => {
 	</select>
 	<div id="selOptionButton" onclick="selOptionButton()">조회</div>
 	<div id="youtubelist"></div>
+	<div id="moreYoutubeListButton" onclick="moreYoutubeList()">∨</div>
 </body>
 </html>
