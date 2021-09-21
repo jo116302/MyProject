@@ -69,9 +69,13 @@ public class youtube2Controller {
 	public HashMap<String, Object> getYoutubeApiVideoInfo(@PathVariable String id) {
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		
+		int idx = 1;
+		String[] keys = {"youtube.key1", "youtube.key2", "youtube.key3"};
+		
 		hm.put("videoInfo", youtubeSrv.videoInfo(id));
-		if (Youtube2SrvImpl.PROPERTIES_FILENAME.equals("youtube.key1") && (youtubeSrv.videoInfo(id).get(0).containsKey("ErrorReason") ? youtubeSrv.videoInfo(id).get(0).get("ErrorReason").equals("quotaExceeded") : false)) {
-			Youtube2SrvImpl.PROPERTIES_FILENAME = "youtube.key2";
+		if (idx < 3 && (youtubeSrv.videoInfo(id).get(0).containsKey("ErrorReason") ? youtubeSrv.videoInfo(id).get(0).get("ErrorReason").equals("quotaExceeded") : false)) {
+			idx++;
+			Youtube2SrvImpl.PROPERTIES_FILENAME = keys[idx];
 			
 			hm = new HashMap<String, Object>();
 			hm.put("videoinfo", youtubeSrv.videoInfo(id));
