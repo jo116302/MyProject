@@ -1,6 +1,7 @@
 package kr.co.myProject.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.annotation.Resource;
@@ -67,50 +68,60 @@ public class youtube2Controller {
 	@RequestMapping(value = "/api/getvideoinfo/{id}")
 	@ResponseBody
 	public HashMap<String, Object> getYoutubeApiVideoInfo(@PathVariable String id) {
-		HashMap<String, Object> hm = new HashMap<String, Object>();
+		HashMap<String, Object> hm=null;
 		
-		int idx = 1;
+		int idx = 0;
 		String[] keys = {"youtube.key1", "youtube.key2", "youtube.key3"};
 		
-		hm.put("videoInfo", youtubeSrv.videoInfo(id));
-		if (idx < 3 && (youtubeSrv.videoInfo(id).get(0).containsKey("ErrorReason") ? youtubeSrv.videoInfo(id).get(0).get("ErrorReason").equals("quotaExceeded") : false)) {
-			idx++;
-			Youtube2SrvImpl.PROPERTIES_FILENAME = keys[idx];
-			
+		while(true) {
 			hm = new HashMap<String, Object>();
-			hm.put("videoinfo", youtubeSrv.videoInfo(id));
-		} else if (youtubeSrv.videoInfo(id).get(0).containsKey("ErrorReason")) {
-			logger.error("■■■■■ YoutubevideoInfo key : "+Youtube2SrvImpl.PROPERTIES_FILENAME+", ErrorReason : "+hm.containsKey("ErrorReason"));
-			hm.put("Error", youtubeSrv.videoInfo(id).get(0).get("error"));
+			
+			Youtube2SrvImpl.PROPERTIES_FILENAME = keys[idx];
+			logger.info("■■■■■ YoutubevideoInfo key : "+Youtube2SrvImpl.PROPERTIES_FILENAME);
+			hm.put("videoInfo", youtubeSrv.videoInfo(id));
+			
+			if ((((HashMap<String, Object>)((ArrayList<HashMap<String, Object>>) hm.get("videoInfo")).get(0)).containsKey("ErrorReason") ? ((HashMap<String, Object>)((ArrayList<HashMap<String, Object>>) hm.get("videoInfo")).get(0)).get("ErrorReason").equals("quotaExceeded") : false) && idx < 2) {
+				logger.error("■■■■■ YoutubevideoInfo key : "+Youtube2SrvImpl.PROPERTIES_FILENAME+", ErrorReason : "+hm.get("videoInfo"));
+				idx++;
+				Youtube2SrvImpl.PROPERTIES_FILENAME = keys[idx];
+			} else if(((HashMap<String, Object>)((ArrayList<HashMap<String, Object>>) hm.get("videoInfo")).get(0)).containsKey("ErrorReason")) {
+				logger.error("■■■■■ YoutubevideoInfo key : "+Youtube2SrvImpl.PROPERTIES_FILENAME+", ErrorReason : "+youtubeSrv.videoInfo(id).get(0).get("error"));
+				break;
+			} else {
+				break;
+			}
 		}
-		
-		logger.info("■■■■■ YoutubevideoInfo key : "+Youtube2SrvImpl.PROPERTIES_FILENAME);
-
+		System.out.println(hm.toString());
 		return hm;
 	}
 
 	@RequestMapping(value = "/api/playlist/{id}")
 	@ResponseBody
 	public HashMap<String, Object> getYoutubePlaylist(@PathVariable String id) {
-		HashMap<String, Object> hm = new HashMap<String, Object>();
+		HashMap<String, Object> hm=null;
 		
-		int idx = 1;
+		int idx = 0;
 		String[] keys = {"youtube.key1", "youtube.key2", "youtube.key3"};
 		
-		hm.put("videoinfo", youtubeSrv.playlist(id));
-		if ((youtubeSrv.playlist(id).get(0).containsKey("ErrorReason") ? youtubeSrv.playlist(id).get(0).get("ErrorReason").equals("quotaExceeded") : false) && idx < 3) {
-			idx++;
-			Youtube2SrvImpl.PROPERTIES_FILENAME = keys[idx];
-			
+		while(true) {
 			hm = new HashMap<String, Object>();
+			
+			Youtube2SrvImpl.PROPERTIES_FILENAME = keys[idx];
+			logger.info("■■■■■ YoutubevideoInfo key : "+Youtube2SrvImpl.PROPERTIES_FILENAME);
 			hm.put("videoinfo", youtubeSrv.playlist(id));
-		} else if (youtubeSrv.playlist(id).get(0).containsKey("ErrorReason")) {
-			logger.error("■■■■■ YoutubePlayList key : "+Youtube2SrvImpl.PROPERTIES_FILENAME+", ErrorReason : "+hm.containsKey("ErrorReason"));
-			hm.put("Error", youtubeSrv.playlist(id).get(0).get("error"));
+			
+			if ((((HashMap<String, Object>)((ArrayList<HashMap<String, Object>>) hm.get("videoinfo")).get(0)).containsKey("ErrorReason") ? ((HashMap<String, Object>)((ArrayList<HashMap<String, Object>>) hm.get("videoinfo")).get(0)).get("ErrorReason").equals("quotaExceeded") : false) && idx < 2) {
+				logger.error("■■■■■ YoutubevideoInfo key : "+Youtube2SrvImpl.PROPERTIES_FILENAME+", ErrorReason : "+hm.get("videoInfo"));
+				idx++;
+				Youtube2SrvImpl.PROPERTIES_FILENAME = keys[idx];
+			} else if (((HashMap<String, Object>)((ArrayList<HashMap<String, Object>>) hm.get("videoinfo")).get(0)).containsKey("ErrorReason")) {
+				logger.error("■■■■■ YoutubePlayList key : "+Youtube2SrvImpl.PROPERTIES_FILENAME+", ErrorReason : "+hm.containsKey("ErrorReason"));
+				break;
+			} else {
+				break;
+			}
 		}
 		
-		logger.info("■■■■■ YoutubePlayList key : "+Youtube2SrvImpl.PROPERTIES_FILENAME);
-
 		return hm;
 	}
 }

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -57,6 +59,8 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 	/** --------------------------------- e:Youtube API --------------------------------- **/
 	@Autowired
 	private Environment environment;		// 빈 주입을 받습니다.
+	
+	private static final Logger logger = LoggerFactory.getLogger(Youtube2SrvImpl.class);
 
     private String getUtil(String key){
         return environment.getProperty(key);
@@ -85,7 +89,6 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 			SearchListResponse searchResponse = search.execute();
 
 			List<SearchResult> searchResultList = searchResponse.getItems();
-			
 			if (searchResponse != null) {
 				Iterator<SearchResult> iteSearchResult = searchResultList.iterator();
 				
@@ -105,6 +108,7 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 					
 					videos.add(videoinfo);
 				}
+				logger.info("■■■■■ result : " + videos.toString());
 			}
 		} catch (GoogleJsonResponseException e) {
 			HashMap<String, Object> error = new HashMap<String, Object>();
@@ -118,6 +122,7 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+		
 		return videos;
 	}
 
@@ -126,6 +131,8 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 		// TODO Auto-generated method stub
 		String apiKey = getUtil(PROPERTIES_FILENAME);
 		ArrayList<HashMap<String, Object>> videos = new ArrayList<HashMap<String,Object>>();
+		
+		System.out.println("apiKey : "+apiKey);
 		
 		try {
 			youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
@@ -148,8 +155,8 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 				while (iteVideoResult.hasNext()) {
 					HashMap<String, Object> videoinfo = new HashMap<String, Object>();
 					Video singleVideo = iteVideoResult.next();
-					System.out.println(singleVideo.toString());
-
+					logger.info("■■■■■ result : " + singleVideo.toString());
+					
 					// Double checks the kind is video.
 					if (singleVideo.getKind().equals("youtube#video")) {
 						Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("high");

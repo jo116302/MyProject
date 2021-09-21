@@ -213,6 +213,7 @@ function getParameter(param) {
 }
 
 playListAjax = async (channelId) => {
+	console.log('channelId : '+channelId);
     const result = await $.ajax({
         // url은 임시로 사용
         url : '/youtube2/api/playlist/'+channelId,
@@ -220,6 +221,7 @@ playListAjax = async (channelId) => {
         dataType : 'json',
         timeout : 2000,  // 단위 ms
 	})
+	console.log(result);
 	return result.videoinfo;
 }
 
@@ -236,6 +238,7 @@ selOptionButton = async () => {
 	$('#youtubelist').empty();
 	const channelId = $('select[name=youtubeChannel]').val();
 	await playListAjax(channelId).then((result) => {
+		console.log('result : '+result);
 		let youtubelistHtml = '';
 		if (result.length > 0) {
 			youtubelistHtml += '<ul id="youtubeListUl">';
@@ -246,8 +249,9 @@ selOptionButton = async () => {
 				youtubelistHtml += '<div id="thumbnail" class="thumbnail_sel"><img src="'+result[idx].Thumbnail+'" height="100px"></div>';
 				youtubelistHtml += '<div id="description" class="description_sel"><strong>'+result[idx].Title+'</strong>'+(result[idx].Description !=null ? '<br />'+result[idx].Description : '')+'</div>';
 				youtubelistHtml += '</a>';  
-				youtubelistHtml += '<div id="youtubePlayButton" onclick=\'youtubePlayButton(this)\'>영상확인</div>';
-				youtubelistHtml += '<div id="youtubePlay" style="display: none;"><iframe width="256" height="144" src="https://www.youtube.com/embed/'+result[idx].Video_Id+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+				youtubelistHtml += '<div id="youtubePlayButton" onclick="youtubePlayButton(this, \''+result[idx].Video_Id+'\')">영상확인</div>';
+				//youtubelistHtml += '<div id="youtubePlay" style="display: none;"><iframe width="256" height="144" src="https://www.youtube.com/embed/'+result[idx].Video_Id+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+				youtubelistHtml += '<div id="youtubePlay" style="display: none;"></div>';
 				youtubelistHtml += '</li>';
 			}
 			youtubelistHtml += '</ul>';
@@ -268,14 +272,17 @@ selOptionButton = async () => {
 	});
 }
 
-youtubePlayButton = (e) => {
-	console.log($(e).next().css("display"));
-	if($(e).next().css("display") == 'none'){
-		/* $(e).next().css({"display": "block"}); */
-		$(e).next().show();
-	}else if($(e).next().css("display") == 'block'){
-		/* $(e).next().css({"display": "none"}); */
-		$(e).next().hide();
+youtubePlayButton = (th, videoid) => {
+	console.log($(th).next().css("display"));
+	if($(th).next().css("display") == 'none'){
+		/* $(th).next().css({"display": "block"}); */
+		if($(th).next().html().length == 0){
+			$(th).next().append('<iframe width="256" height="144" src="https://www.youtube.com/embed/'+videoid+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+		}
+		$(th).next().show();
+	}else if($(th).next().css("display") == 'block'){
+		/* $(th).next().css({"display": "none"}); */
+		$(th).next().hide();
 	}
 }
 
