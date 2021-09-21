@@ -66,7 +66,7 @@
 
 .moreYoutubeListButton {
 	-webkit-transform: rotate(180deg);
-	transform: rotate(180deg);
+	transform: rotate(180deg) 1s;
 }
 </style>
 
@@ -123,7 +123,6 @@ crawling = (httpYoutubeLinkCreate) => {
             async : false,
             success : (data) => {
             	console.log(data);
-            	console.log(data.videoInfo[0].Title+'\n'+data.videoInfo[0].Thumbnail+'\n'+data.videoInfo[0].Description);
                 kakao_title = data.videoInfo[0].Title;
                 kakao_img = data.videoInfo[0].Thumbnail;
                 kakao_description = data.videoInfo[0].Description;
@@ -246,13 +245,14 @@ selOptionButton = async () => {
 				youtubelistHtml += '<a id="KakaoToalk_Share" onclick="KakaoTalk_Share_Trigger(\''+result[idx].Title+'\', \''+(result[idx].Description !=null ? result[idx].Description : '')+'\', \''+result[idx].Thumbnail+'\', \''+result[idx].Video_Id+'\')">';
 				youtubelistHtml += '<div id="thumbnail" class="thumbnail_sel"><img src="'+result[idx].Thumbnail+'" height="100px"></div>';
 				youtubelistHtml += '<div id="description" class="description_sel"><strong>'+result[idx].Title+'</strong>'+(result[idx].Description !=null ? '<br />'+result[idx].Description : '')+'</div>';
-				youtubelistHtml += '</a>'; 
+				youtubelistHtml += '</a>';  
+				youtubelistHtml += '<div id="youtubePlayButton" onclick=\'youtubePlayButton(this)\'>영상확인</div>';
+				youtubelistHtml += '<div id="youtubePlay" style="display: none;"><iframe width="256" height="144" src="https://www.youtube.com/embed/'+result[idx].Video_Id+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
 				youtubelistHtml += '</li>';
 			}
 			youtubelistHtml += '</ul>';
 			youtubelistHtml += '<div id="moreYoutubeListButton" class="moreYoutubeListButton" onclick="moreYoutubeList()"><svg width="100%" height="100%" viewBox="0 0 18 18" fit="" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M4.288 11.632a.965.965 0 0 1 0-1.375l4.017-3.972a.99.99 0 0 1 1.39 0l4.017 3.972a.965.965 0 0 1 0 1.375l-.084.083a.99.99 0 0 1-1.39 0L9 8.515l-3.237 3.2a.99.99 0 0 1-1.39 0l-.085-.083z" fill-rule="evenodd"></path></svg></div>';
 		}
-		
 		$('#youtubelist').append(youtubelistHtml);
 	}).then(() => {
 		$("#youtubeListUl li").each((index, item) => {
@@ -266,6 +266,17 @@ selOptionButton = async () => {
 			$('#moreYoutubeListButton').show();
 		}
 	});
+}
+
+youtubePlayButton = (e) => {
+	console.log($(e).next().css("display"));
+	if($(e).next().css("display") == 'none'){
+		/* $(e).next().css({"display": "block"}); */
+		$(e).next().show();
+	}else if($(e).next().css("display") == 'block'){
+		/* $(e).next().css({"display": "none"}); */
+		$(e).next().hide();
+	}
 }
 
 moreYoutubeList = () => {
