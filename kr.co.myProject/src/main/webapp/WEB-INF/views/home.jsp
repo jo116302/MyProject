@@ -248,6 +248,7 @@ selOptionButton = async () => {
 				youtubelistHtml += '<a id="KakaoToalk_Share" onclick="KakaoTalk_Share_Trigger(\''+result[idx].Title+'\', \''+(result[idx].Description !=null ? result[idx].Description : '')+'\', \''+result[idx].Thumbnail+'\', \''+result[idx].Video_Id+'\')">';
 				youtubelistHtml += '<div id="thumbnail" class="thumbnail_sel"><img src="'+result[idx].Thumbnail+'" height="100px"></div>';
 				youtubelistHtml += '<div id="description" class="description_sel"><strong>'+result[idx].Title+'</strong>'+(result[idx].Description !=null ? '<br />'+result[idx].Description : '')+'</div>';
+				youtubelistHtml += '<div id="publishedAt" class="publishedAt_sel">업로드 시간 : '+result[idx].PublishedAt+'</div>';
 				youtubelistHtml += '</a>';  
 				youtubelistHtml += '<div id="youtubePlayButton" onclick="youtubePlayButton(this, \''+result[idx].Video_Id+'\')">영상확인</div>';
 				//youtubelistHtml += '<div id="youtubePlay" style="display: none;"><iframe width="256" height="144" src="https://www.youtube.com/embed/'+result[idx].Video_Id+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
@@ -276,12 +277,12 @@ youtubePlayButton = (th, videoid) => {
 	console.log($(th).next().css("display"));
 	if($(th).next().css("display") == 'none'){
 		/* $(th).next().css({"display": "block"}); */
-		if($(th).next().html().length == 0){
-			$(th).next().append('<iframe width="256" height="144" src="https://www.youtube.com/embed/'+videoid+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
-		}
+		
+		$(th).next().append('<iframe width="256" height="144" src="https://www.youtube.com/embed/'+videoid+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
 		$(th).next().show();
 	}else if($(th).next().css("display") == 'block'){
 		/* $(th).next().css({"display": "none"}); */
+		$(th).next().empty();
 		$(th).next().hide();
 	}
 }

@@ -84,7 +84,7 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 			search.setOrder("date");
 			search.setType("video");
 
-			search.setFields("items(id/kind,id/videoId,snippet/title,snippet/description,snippet/thumbnails/high/url)");
+			search.setFields("items(id/kind,id/videoId,snippet/title,snippet/description,snippet/thumbnails/high/url,snippet/publishedAt)");
 			search.setMaxResults(NUMBER_OF_VIDEOS_RETURNED);
 			SearchListResponse searchResponse = search.execute();
 
@@ -99,11 +99,13 @@ public class Youtube2SrvImpl implements Youtube2Srv {
 
 					// Double checks the kind is video.
 					if (rId.getKind().equals("youtube#video")) {
+						
 						Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("high");
 						videoinfo.put("Video_Id", rId.getVideoId());
 						videoinfo.put("Title", singleVideo.getSnippet().getTitle());
 						videoinfo.put("Thumbnail", thumbnail.getUrl());
 						videoinfo.put("Description", singleVideo.getSnippet().getDescription());
+						videoinfo.put("PublishedAt", singleVideo.getSnippet().getPublishedAt().toString().substring(0, 16).replace("T", " "));
 					}
 					
 					videos.add(videoinfo);
