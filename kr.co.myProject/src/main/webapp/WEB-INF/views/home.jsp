@@ -76,21 +76,91 @@
 </head>
 
 <script type="text/javascript">
+/*
+ * commonAjax_tran
+ * @param	url				: Ajax 요청할 url
+ * @param	params			: Ajax 요청시 전송할 파라미터
+ * @param	scCallback		: ajax 결과 성공시 callback
+ * @param	failCallback	: ajax 결과 실패 callback
+ * @param	method			: POST/GET 구분
+ */
+function commonAjax_tran (url, params, scCallback, failCallback, method) {
+	const $frm = $('<form></form>');
+	$frm.attr("action", url);
+	
+	let keys = Object.keys(params);
+	keys.forEach(function (key) {
+		$frm.append($('<input/>', {type:'hidden', name:key, value:params[keys]}));
+	});
+	
+	commonAjax(url, $frm, scCallback, failCallback, method);
+}
+ 
+/*
+ * commonAjax
+ * @param	url				: Ajax 요청할 url
+ * @param	params			: URL, Parameters
+ * @param	scCallback		: ajax 결과 성공시 callback
+ * @param	failCallback	: ajax 결과 실패 callback
+ * @param	method			: POST/GET 구분
+ */
+function commonAjax (url, params, scCallback, failCallback, method) {
+	let result = null;
+	$.ajax({
+		url : url,
+		type : method,
+		//data : params.serialize(),
+		dataType : 'json',
+		success : function(data) {
+			result = data;
+		},
+		complete : function (result, result_message) {
+			let isSuccess = false;
+			
+			if (result_message === 'success') {
+				isSuccess = true;
+			}
+			
+			if (isSuccess) {
+				if( typeof scCallback === 'function' ) {
+					scCallback(result);
+				} else if ( typeof failCallback === 'function' ) {
+					failCallback(result);
+				}
+			}
+		}
+	});
+}
+
+/*
+ * crawling
+ */
+function crawling() {
+	let httpYoutubeLinkCreate = getParameter('v');
+	commonAjax_tran('/youtube2/api/getvideoinfo/'+httpYoutubeLinkCreate, '', createUrl, '', 'GET');
+}
+
+
+
 let youtubeListCount = 10;
 
-createUrl = () => {
-   let httpYoutubeLinkCreate = getParameter('v');
-   crawling(httpYoutubeLinkCreate);
-   let printUrl = '<br />유튜브 원클릭 주소가 복사 되었습니다.<br />' + '<div id="link">http://youtube2.kr/homezy/?y=' + httpYoutubeLinkCreate + '</div>' + '<span class="sociallink ml-1"><a href="javascript:KakaoToalk_Share(\'\')" id="KakaoToalk_Share" title="카카오톡으로 공유"><img src="http://youtube2.kr/y/kakao_li_2.png" alt="" width="300" height="45" /></a></span>';
+createUrl = (result) => {
+	kakao_title = result.responseJSON.videoInfo[0].Title;
+    kakao_img = result.responseJSON.videoInfo[0].Thumbnail;
+    kakao_description = result.responseJSON.videoInfo[0].Description;
+	
+	let httpYoutubeLinkCreate = getParameter('v');
+	//crawling(httpYoutubeLinkCreate);
+	let printUrl = '<br />유튜브 원클릭 주소가 복사 되었습니다.<br />' + '<div id="link">http://youtube2.kr/homezy/?y=' + httpYoutubeLinkCreate + '</div>' + '<span class="sociallink ml-1"><a href="javascript:KakaoToalk_Share(\'\')" id="KakaoToalk_Share" title="카카오톡으로 공유"><img src="http://youtube2.kr/y/kakao_li_2.png" alt="" width="300" height="45" /></a></span>';
 
-   if (httpYoutubeLinkCreate == '') {
-      document.getElementById('youtubeUrl').focus();
-      alert('Youtube URL를 넣어주세요.');
-   } else {
-      document.getElementById("createUrlPrint").innerHTML=printUrl;
-      // url 복사 기능까지 사용하시려면 copyUrl()을 그냥 두시고, 그렇지 않으면 주석이나 지워도 될 것같아요.
-      copyUrl();
-   }
+	if (httpYoutubeLinkCreate == '') {
+		document.getElementById('youtubeUrl').focus();
+    	alert('Youtube URL를 넣어주세요.');
+	} else {
+		document.getElementById("createUrlPrint").innerHTML=printUrl;
+		// url 복사 기능까지 사용하시려면 copyUrl()을 그냥 두시고, 그렇지 않으면 주석이나 지워도 될 것같아요.
+		copyUrl();
+	}
 }
 
 // 유튜브 크롤링
@@ -112,7 +182,7 @@ crawling = (httpYoutubeLinkCreate) => {
                 }
         })
 }
-*/
+
 crawling = (httpYoutubeLinkCreate) => {
     $.ajax({
             // url은 임시로 사용
@@ -129,7 +199,7 @@ crawling = (httpYoutubeLinkCreate) => {
             }
     })
 }
-
+*/
 //Kakao.init('d02fd05af201f3eee3c8edac91f3cc16');
 Kakao.init('35687c5740a2dedb01492077acb5b4c9');
 let kakao_img = 'http://youtube2.kr/y/logo2.jpg';
@@ -328,7 +398,7 @@ $(() => {
 				<label for="floatingInput">YouTube URL 입력하세요</label>
 			</div>
 				<div class="checkbox mb-3"></div>
-				<button type="button" class="w-100 btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false" onclick="createUrl()">원클릭 유튜브 주소 만들기</button>
+				<button type="button" class="w-100 btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false" onclick="crawling()">원클릭 유튜브 주소 만들기</button>
 			</div>
 			<div class="mt-5 mb-3 text-muted" id="createUrlPrint"></div>
 		</form>
