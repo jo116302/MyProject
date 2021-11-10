@@ -78,10 +78,10 @@
 <script type="text/javascript">
 /*
  * commonAjax_tran
- * @param	url				: Ajax 요청할 url
+ * @param	url			: Ajax 요청할 url
  * @param	params			: Ajax 요청시 전송할 파라미터
  * @param	scCallback		: ajax 결과 성공시 callback
- * @param	failCallback	: ajax 결과 실패 callback
+ * @param	failCallback		: ajax 결과 실패 callback
  * @param	method			: POST/GET 구분
  */
 function commonAjax_tran (url, params, scCallback, failCallback, method) {
@@ -98,10 +98,10 @@ function commonAjax_tran (url, params, scCallback, failCallback, method) {
  
 /*
  * commonAjax
- * @param	url				: Ajax 요청할 url
+ * @param	url			: Ajax 요청할 url
  * @param	params			: URL, Parameters
  * @param	scCallback		: ajax 결과 성공시 callback
- * @param	failCallback	: ajax 결과 실패 callback
+ * @param	failCallback		: ajax 결과 실패 callback
  * @param	method			: POST/GET 구분
  */
 function commonAjax (url, params, scCallback, failCallback, method) {
