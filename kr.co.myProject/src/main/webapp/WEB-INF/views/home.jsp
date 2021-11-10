@@ -105,12 +105,13 @@ function commonAjax_tran (url, params, scCallback, failCallback, method) {
  * @param	method			: POST/GET 구분
  */
 function commonAjax (url, params, scCallback, failCallback, method) {
-	let result = null;
+	let result = '';
 	$.ajax({
 		url : url,
 		type : method,
-		//data : params.serialize(),
+		data : JSON.stringify(params.serialize()),
 		dataType : 'json',
+		contentType : 'application/json; charset=utf8',
 		success : function(data) {
 			result = data;
 		},
@@ -134,15 +135,39 @@ function commonAjax (url, params, scCallback, failCallback, method) {
 
 /*
  * crawling
+ *   - 원클릭 유튜브 주소 만들기 이벤트
  */
 function crawling() {
 	let httpYoutubeLinkCreate = getParameter('v');
 	commonAjax_tran('/youtube2/api/getvideoinfo/'+httpYoutubeLinkCreate, '', createUrl, '', 'GET');
 }
 
+//파라미터 추출
+function getParameter(param) {
+	let requestParam = "";
+	
+	//현재 주소를 decoding
+	const url = document.getElementById('youtubeUrl').value.replaceAll(' ','');
+	
+	if (url.split('/')[2] == 'youtu.be') {
+		// 공유 링크로 들어오는 경우
+		requestParam = url.split('/')[3];
+	} else {
+		// 웹 URL로 들어오는 경우
+		const paramArr = (url.substring(url.indexOf("?") + 1, url.length)).split("&");
+		for (let i = 0; i < paramArr.length; i++) {
+			let temp = paramArr[i].split("="); //파라미터 변수명을 담음
+			
+			if (temp[0].toUpperCase() == param.toUpperCase()) {
+				// 변수명과 일치할 경우 데이터 삽입
+				requestParam = paramArr[i].split("=")[1];
+				break;
+			}
+		}
+	}
 
-
-let youtubeListCount = 10;
+    return requestParam;
+}
 
 createUrl = (result) => {
 	kakao_title = result.responseJSON.videoInfo[0].Title;
@@ -163,48 +188,31 @@ createUrl = (result) => {
 	}
 }
 
-// 유튜브 크롤링
-/* 
-crawling = (httpYoutubeLinkCreate) => {
-        $.ajax({
-                // url은 임시로 사용
-                url : 'http://35.226.140.4:8080/youtubeCrawling.jsp',
-                type : 'POST',
-                data : {id : httpYoutubeLinkCreate},
-                dataType : 'json',
-                timeout : 1000,  // 단위 ms
-                async : false,
-                success : (data) => {
-                	console.log(data);
-                    kakao_title = data.kakao_title;
-                    kakao_img = data.kakao_img;
-                    kakao_description = data.kakao_description;
-                }
-        })
+// 원클릭 주소 만들기로 만든 주소 복사
+copyUrl = () => {
+	let link = document.createRange();
+	link.selectNode(document.getElementById('link'));
+	window.getSelection().removeAllRanges();
+	window.getSelection().addRange(link);
+	document.execCommand('copy');
+	window.getSelection().removeAllRanges();
 }
 
-crawling = (httpYoutubeLinkCreate) => {
-    $.ajax({
-            // url은 임시로 사용
-            url : '/youtube2/api/getvideoinfo/'+httpYoutubeLinkCreate,
-            type : 'GET',
-            dataType : 'json',
-            timeout : 1000,  // 단위 ms
-            async : false,
-            success : (data) => {
-            	console.log(data);
-                kakao_title = data.videoInfo[0].Title;
-                kakao_img = data.videoInfo[0].Thumbnail;
-                kakao_description = data.videoInfo[0].Description;
-            }
-    })
-}
-*/
-//Kakao.init('d02fd05af201f3eee3c8edac91f3cc16');
+/*
+ * 카카오톡 공유 설정
+ */
 Kakao.init('35687c5740a2dedb01492077acb5b4c9');
 let kakao_img = 'http://youtube2.kr/y/logo2.jpg';
 let kakao_title = '라이브 예배실황';
 let kakao_description = '온라인 예배';
+
+KakaoTalk_Share_Trigger = (Title, Description, Thumbnail, Video_id) => {
+	kakao_title = Title;
+	kakao_description = Description;
+	kakao_img = Thumbnail;
+	
+	KakaoToalk_Share(Video_id);
+}
 
 KakaoToalk_Share = (link) => {
 	let youtubeLink = '';
@@ -245,43 +253,88 @@ KakaoToalk_Share = (link) => {
 	});
 }
 
-
-copyUrl = () => {
-	let link = document.createRange();
-	link.selectNode(document.getElementById('link'));
-	window.getSelection().removeAllRanges();
-	window.getSelection().addRange(link);
-	document.execCommand('copy');
-	window.getSelection().removeAllRanges();
+/*
+ * 50개의 Youtube 목록 조회
+ */
+function playListAjax () {
+	let channelId = $('select[name=youtubeChannel]').val();
+	commonAjax_tran('/youtube2/api/playlist/'+channelId, '', selOptionButton, '', 'GET');
 }
 
-//파라미터 추출
-function getParameter(param) {
-	let requestParam = "";
+let totalYoutubeListCount = null;
+let youtubeListCount = 10;
+
+function selOptionButton (result1) {
+	let result = result1.responseJSON.videoinfo;
+	totalYoutubeListCount = result.length;
 	
-	//현재 주소를 decoding
-	const url = document.getElementById('youtubeUrl').value.replaceAll(' ','');
-	
-	if (url.split('/')[2] == 'youtu.be') {
-		// 공유 링크로 들어오는 경우
-		requestParam = url.split('/')[3];
-	} else {
-		// 웹 URL로 들어오는 경우
-		const paramArr = (url.substring(url.indexOf("?") + 1, url.length)).split("&");
-		for (let i = 0; i < paramArr.length; i++) {
-			let temp = paramArr[i].split("="); //파라미터 변수명을 담음
-			
-			if (temp[0].toUpperCase() == param.toUpperCase()) {
-				// 변수명과 일치할 경우 데이터 삽입
-				requestParam = paramArr[i].split("=")[1];
-				break;
-			}
+	let youtubelistHtml = '';
+	if (totalYoutubeListCount > 0) {
+		youtubelistHtml += '<ul id="youtubeListUl">';
+		
+		for (let idx=0; idx < totalYoutubeListCount; idx++) {
+			youtubelistHtml += '<li style="display: none;">';
+			youtubelistHtml += '<a id="KakaoToalk_Share" onclick="KakaoTalk_Share_Trigger(\''+result[idx].Title+'\', \''+(result[idx].Description !=null ? result[idx].Description : '')+'\', \''+result[idx].Thumbnail+'\', \''+result[idx].Video_Id+'\')">';
+			youtubelistHtml += '<div id="thumbnail" class="thumbnail_sel"><img src="'+result[idx].Thumbnail+'" height="100px"></div>';
+			youtubelistHtml += '<div id="description" class="description_sel"><strong>'+result[idx].Title+'</strong>'+(result[idx].Description !=null ? '<br />'+result[idx].Description : '')+'</div>';
+			youtubelistHtml += '<div id="publishedAt" class="publishedAt_sel">업로드 시간 : '+result[idx].PublishedAt+'</div>';
+			youtubelistHtml += '</a>'; 
+			youtubelistHtml += '<div id="youtubePlayButton" onclick="youtubePlayButton(this, \''+result[idx].Video_Id+'\')">영상확인</div>';
+			//youtubelistHtml += '<div id="youtubePlay" style="display: none;"><iframe width="256" height="144" src="https://www.youtube.com/embed/'+result[idx].Video_Id+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+			youtubelistHtml += '<div id="youtubePlay" style="display: none;"></div>';
+			youtubelistHtml += '</li>';
 		}
+		youtubelistHtml += '</ul>';
+		youtubelistHtml += '<div id="moreYoutubeListButton" class="moreYoutubeListButton" onclick="moreYoutubeList()"><svg width="100%" height="100%" viewBox="0 0 18 18" fit="" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M4.288 11.632a.965.965 0 0 1 0-1.375l4.017-3.972a.99.99 0 0 1 1.39 0l4.017 3.972a.965.965 0 0 1 0 1.375l-.084.083a.99.99 0 0 1-1.39 0L9 8.515l-3.237 3.2a.99.99 0 0 1-1.39 0l-.085-.083z" fill-rule="evenodd"></path></svg></div>';
 	}
-
-    return requestParam;
+	
+	$('#youtubelist').append(youtubelistHtml);
+	
+	$("#youtubeListUl li").each((index, item) => {
+		console.log(item);
+		if (index < youtubeListCount) {
+			$(item).show();
+		}
+	});
+	
+	if(youtubeListCount < totalYoutubeListCount) {
+		$('#moreYoutubeListButton').show();
+	}
 }
 
+/*
+ * Youtube 조회 리스트 페이징처리
+ */
+moreYoutubeList = () => {
+	$("#youtubeListUl li").each((index, item) => {
+		if (index >= youtubeListCount && youtubeListCount+10 >= index) {
+			$(item).show();
+		}
+	});
+		
+	youtubeListCount = youtubeListCount + 10;
+	if(youtubeListCount >= totalYoutubeListCount) {
+		$('#moreYoutubeListButton').hide();
+	}
+}
+
+youtubePlayButton = (th, videoid) => {
+	console.log($(th).next().css("display"));
+	if($(th).next().css("display") == 'none'){
+		/* $(th).next().css({"display": "block"}); */
+		
+		$(th).next().append('<iframe width="256" height="144" src="https://www.youtube.com/embed/'+videoid+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+		$(th).next().show();
+	}else if($(th).next().css("display") == 'block'){
+		/* $(th).next().css({"display": "none"}); */
+		$(th).next().empty();
+		$(th).next().hide();
+	}
+}
+
+
+/* 
+// async/await 방식
 playListAjax = async (channelId) => {
 	console.log('channelId : '+channelId);
     const result = await $.ajax({
@@ -294,15 +347,9 @@ playListAjax = async (channelId) => {
 	console.log(result);
 	return result.videoinfo;
 }
+*/
 
-KakaoTalk_Share_Trigger = (Title, Description, Thumbnail, Video_id) => {
-	kakao_title = Title;
-	kakao_description = Description;
-	kakao_img = Thumbnail;
-	
-	KakaoToalk_Share(Video_id);
-}
-
+/*
 selOptionButton = async () => {
 	youtubeListCount = 10;
 	$('#youtubelist').empty();
@@ -342,49 +389,7 @@ selOptionButton = async () => {
 		}
 	});
 }
-
-youtubePlayButton = (th, videoid) => {
-	console.log($(th).next().css("display"));
-	if($(th).next().css("display") == 'none'){
-		/* $(th).next().css({"display": "block"}); */
-		
-		$(th).next().append('<iframe width="256" height="144" src="https://www.youtube.com/embed/'+videoid+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
-		$(th).next().show();
-	}else if($(th).next().css("display") == 'block'){
-		/* $(th).next().css({"display": "none"}); */
-		$(th).next().empty();
-		$(th).next().hide();
-	}
-}
-
-moreYoutubeList = () => {
-	$("#youtubeListUl li").each((index, item) => {
-		console.log('test : '+index >= youtubeListCount && youtubeListCount+10 >= index);
-		if (index >= youtubeListCount && youtubeListCount+10 >= index) {
-			$(item).show();
-		}
-	});
-		
-	youtubeListCount = youtubeListCount + 10;
-	if(youtubeListCount == 50) {
-		$('#moreYoutubeListButton').hide();
-	}
-}	
-$(() => {
-	console.log(window.location.href);
-	console.log(window.location.hostname);
-	console.log(window.location.pathname);
-	console.log(window.location.protocol);
-	
-	console.log($(location).attr('host')); 
-	console.log($(location).attr('hostname')); 
-	console.log($(location).attr('pathname')); 
-	console.log($(location).attr('href')); 
-	console.log($(location).attr('port')); 
-	console.log($(location).attr('protocol')); 
-})
-
-
+*/
 </script>
 <body class="text-center">
 
@@ -409,7 +414,7 @@ $(() => {
 		<option value="UC9Rzd-bAdxTcDNOmgeOBCTg">수원삼일교회</option>
 		<option value="UC1v6BgyI1_n8_oNVR5dKriw">수원삼일교회TV</option>
 	</select>
-	<div id="selOptionButton" onclick="selOptionButton()">조회</div>
+	<div id="selOptionButton" onclick="playListAjax()">조회</div>
 	<div id="youtubelist"></div>
 	</main>
 </body>
