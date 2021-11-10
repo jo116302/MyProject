@@ -267,6 +267,8 @@ let youtubeListCount = 10;
 function selOptionButton (result1) {
 	let result = result1.responseJSON.videoinfo;
 	totalYoutubeListCount = result.length;
+	$('#youtubelist').empty();
+	youtubeListCount = 10;
 	
 	let youtubelistHtml = '';
 	if (totalYoutubeListCount > 0) {
@@ -291,7 +293,6 @@ function selOptionButton (result1) {
 	$('#youtubelist').append(youtubelistHtml);
 	
 	$("#youtubeListUl li").each((index, item) => {
-		console.log(item);
 		if (index < youtubeListCount) {
 			$(item).show();
 		}
