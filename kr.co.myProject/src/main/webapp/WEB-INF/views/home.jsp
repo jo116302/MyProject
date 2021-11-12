@@ -27,8 +27,6 @@
 <link rel="mask-icon" href="http://youtube2.kr/ss/safari-pinned-tab.svg" color="#5bbad5">
 <meta name="msapplication-TileColor" content="#da532c">
 <meta name="theme-color" content="#ffffff">
-
-
 <link rel="manifest" href="manifest.json">
 -->
 
@@ -57,13 +55,11 @@
 	-moz-user-select: none;
 	user-select: none;
 }
-
 @media ( min-width : 768px) {
 	.bd-placeholder-img-lg {
 		font-size: 3.5rem;
 	}
 }
-
 .moreYoutubeListButton {
 	-webkit-transform: rotate(180deg);
 	transform: rotate(180deg) 1s;
@@ -111,7 +107,7 @@ function commonAjax (url, params, scCallback, failCallback, method) {
 		type : method,
 		data : JSON.stringify(params.serialize()),
 		dataType : 'json',
-		contentType : 'application/json; charset=utf8',
+		contentType : 'application/x-www-form-urlencoded; charset=utf8',
 		success : function(data) {
 			result = data;
 		},
@@ -132,7 +128,6 @@ function commonAjax (url, params, scCallback, failCallback, method) {
 		}
 	});
 }
-
 /*
  * crawling
  *   - 원클릭 유튜브 주소 만들기 이벤트
@@ -141,7 +136,6 @@ function crawling() {
 	let httpYoutubeLinkCreate = getParameter('v');
 	commonAjax_tran('/youtube2/api/getvideoinfo/'+httpYoutubeLinkCreate, '', createUrl, '', 'GET');
 }
-
 //파라미터 추출
 function getParameter(param) {
 	let requestParam = "";
@@ -165,10 +159,8 @@ function getParameter(param) {
 			}
 		}
 	}
-
     return requestParam;
 }
-
 createUrl = (result) => {
 	kakao_title = result.responseJSON.videoInfo[0].Title;
     kakao_img = result.responseJSON.videoInfo[0].Thumbnail;
@@ -177,7 +169,6 @@ createUrl = (result) => {
 	let httpYoutubeLinkCreate = getParameter('v');
 	//crawling(httpYoutubeLinkCreate);
 	let printUrl = '<br />유튜브 원클릭 주소가 복사 되었습니다.<br />' + '<div id="link">http://youtube2.kr/homezy/?y=' + httpYoutubeLinkCreate + '</div>' + '<span class="sociallink ml-1"><a href="javascript:KakaoToalk_Share(\'\')" id="KakaoToalk_Share" title="카카오톡으로 공유"><img src="http://youtube2.kr/y/kakao_li_2.png" alt="" width="300" height="45" /></a></span>';
-
 	if (httpYoutubeLinkCreate == '') {
 		document.getElementById('youtubeUrl').focus();
     	alert('Youtube URL를 넣어주세요.');
@@ -187,7 +178,6 @@ createUrl = (result) => {
 		copyUrl();
 	}
 }
-
 // 원클릭 주소 만들기로 만든 주소 복사
 copyUrl = () => {
 	let link = document.createRange();
@@ -197,7 +187,6 @@ copyUrl = () => {
 	document.execCommand('copy');
 	window.getSelection().removeAllRanges();
 }
-
 /*
  * 카카오톡 공유 설정
  */
@@ -205,7 +194,6 @@ Kakao.init('35687c5740a2dedb01492077acb5b4c9');
 let kakao_img = 'http://youtube2.kr/y/logo2.jpg';
 let kakao_title = '라이브 예배실황';
 let kakao_description = '온라인 예배';
-
 KakaoTalk_Share_Trigger = (Title, Description, Thumbnail, Video_id) => {
 	kakao_title = Title;
 	kakao_description = Description;
@@ -213,7 +201,6 @@ KakaoTalk_Share_Trigger = (Title, Description, Thumbnail, Video_id) => {
 	
 	KakaoToalk_Share(Video_id);
 }
-
 KakaoToalk_Share = (link) => {
 	let youtubeLink = '';
 	if (link.length == 0) {
@@ -252,7 +239,6 @@ KakaoToalk_Share = (link) => {
         ]
 	});
 }
-
 /*
  * 50개의 Youtube 목록 조회
  */
@@ -260,10 +246,8 @@ function playListAjax () {
 	let channelId = $('select[name=youtubeChannel]').val();
 	commonAjax_tran('/youtube2/api/playlist/'+channelId, '', selOptionButton, '', 'GET');
 }
-
 let totalYoutubeListCount = null;
 let youtubeListCount = 10;
-
 function selOptionButton (result1) {
 	let result = result1.responseJSON.videoinfo;
 	totalYoutubeListCount = result.length;
@@ -302,7 +286,6 @@ function selOptionButton (result1) {
 		$('#moreYoutubeListButton').show();
 	}
 }
-
 /*
  * Youtube 조회 리스트 페이징처리
  */
@@ -318,7 +301,6 @@ moreYoutubeList = () => {
 		$('#moreYoutubeListButton').hide();
 	}
 }
-
 youtubePlayButton = (th, videoid) => {
 	console.log($(th).next().css("display"));
 	if($(th).next().css("display") == 'none'){
@@ -332,8 +314,6 @@ youtubePlayButton = (th, videoid) => {
 		$(th).next().hide();
 	}
 }
-
-
 /* 
 // async/await 방식
 playListAjax = async (channelId) => {
@@ -349,7 +329,6 @@ playListAjax = async (channelId) => {
 	return result.videoinfo;
 }
 */
-
 /*
 selOptionButton = async () => {
 	youtubeListCount = 10;
