@@ -128,6 +128,7 @@ function commonAjax (url, params, scCallback, failCallback, method) {
 		}
 	});
 }
+
 /*
  * crawling
  *   - 원클릭 유튜브 주소 만들기 이벤트
@@ -161,6 +162,7 @@ function getParameter(param) {
 	}
     return requestParam;
 }
+
 createUrl = (result) => {
 	kakao_title = result.responseJSON.videoInfo[0].Title;
     kakao_img = result.responseJSON.videoInfo[0].Thumbnail;
@@ -178,6 +180,7 @@ createUrl = (result) => {
 		copyUrl();
 	}
 }
+
 // 원클릭 주소 만들기로 만든 주소 복사
 copyUrl = () => {
 	let link = document.createRange();
@@ -187,6 +190,7 @@ copyUrl = () => {
 	document.execCommand('copy');
 	window.getSelection().removeAllRanges();
 }
+
 /*
  * 카카오톡 공유 설정
  */
@@ -201,6 +205,7 @@ KakaoTalk_Share_Trigger = (Title, Description, Thumbnail, Video_id) => {
 	
 	KakaoToalk_Share(Video_id);
 }
+
 KakaoToalk_Share = (link) => {
 	let youtubeLink = '';
 	if (link.length == 0) {
@@ -239,6 +244,7 @@ KakaoToalk_Share = (link) => {
         ]
 	});
 }
+
 /*
  * 50개의 Youtube 목록 조회
  */
@@ -286,6 +292,7 @@ function selOptionButton (result1) {
 		$('#moreYoutubeListButton').show();
 	}
 }
+
 /*
  * Youtube 조회 리스트 페이징처리
  */
@@ -314,6 +321,7 @@ youtubePlayButton = (th, videoid) => {
 		$(th).next().hide();
 	}
 }
+
 /* 
 // async/await 방식
 playListAjax = async (channelId) => {
@@ -329,6 +337,7 @@ playListAjax = async (channelId) => {
 	return result.videoinfo;
 }
 */
+
 /*
 selOptionButton = async () => {
 	youtubeListCount = 10;
@@ -371,6 +380,7 @@ selOptionButton = async () => {
 }
 */
 </script>
+
 <body class="text-center">
 
 	<main class="form-signin">
