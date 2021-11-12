@@ -111,7 +111,7 @@ function commonAjax (url, params, scCallback, failCallback, method) {
 		type : method,
 		data : JSON.stringify(params.serialize()),
 		dataType : 'json',
-		contentType : 'application/json; charset=utf8',
+		contentType : 'application/x-www-form-urlencoded; charset=utf8',
 		success : function(data) {
 			result = data;
 		},
