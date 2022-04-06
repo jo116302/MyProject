@@ -29,7 +29,7 @@
 			- @Repository
 		context:property-placeholder : 외부 프로퍼티 파일을 로딩하도록 설정
 	 -->
-	<context:component-scan base-package="kr.co.myProject.*" />
+	<context:component-scan base-package="kr.co.myProject.**" />
 	<context:property-placeholder location="classpath:/profile/**"/>
 	
 	<annotation-driven>

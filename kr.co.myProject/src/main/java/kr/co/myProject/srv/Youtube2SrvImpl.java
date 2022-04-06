@@ -28,7 +28,7 @@ import com.google.api.services.youtube.model.Thumbnail;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
-@Service("youtubeSrv")
+@Service
 @PropertySource("classpath:/profile/youtube.properties")
 public class Youtube2SrvImpl implements Youtube2Srv {
 	/** --------------------------------- s:Youtube API --------------------------------- **/
