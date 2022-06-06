@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="홈즈와이 중개 시스템">
+<meta property="og:description" content="YouTube Live Worship">
+<meta property="og:image" content="http://youtube2.kr/logo2.jpg">
+<meta property="og:url" content="http://youtube2.kr/">
+<meta property="og:site_name" content="홈즈와이">
+<meta property="og:locale" content="ko_KR">
+
+
+<meta charset="EUC-KR">
+
+<title>유튜브 영상</title>
+<script type="text/javascript">
+        let url = "";
+        const youtubeId = getParameter("y");
+        const mobileDevice = userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        if (/android/i.test(mobileDevice)) {
+                url = "vnd.youtube://" + youtubeId;
+                window.location.href = url;
+                window.location.href = "kakaotalk://inappbrowser/close";
+        }else if(/iPad|iPhone|iPod/.test(userAgent)) {
+                url = "vnd.youtube://" + youtubeId;
+                  window.open(url);
+                  window.open("kakaoweb://closeBrowser");
+
+        } else {
+                // pc에서 접속
+                url = "https://www.youtube.com/watch?v=" + youtubeId;
+                window.location.href = url;
+        }
+
+        // 파라미터 추출
+        function getParameter(param) {
+                let requestParam = "";
+
+                //현재 주소를 decoding
+                const url = unescape(location.href);
+                //파라미터만 자르고, 다시 &그분자를 잘라서 배열에 넣는다.
+                const paramArr = (url.substring(url.indexOf("?") + 1, url.length)).split("&");
+
+                for (let i = 0; i < paramArr.length; i++) {
+                        let temp = paramArr[i].split("="); //파라미터 변수명을 담음
+
+                        if (temp[0].toUpperCase() == param.toUpperCase()) {
+                                // 변수명과 일치할 경우 데이터 삽입
+                                requestParam = paramArr[i].split("=")[1];
+                                break;
+                        }
+                }
+                return requestParam;
+        }
+
+        // 접근 디바이스 체크 - 사용 않함
+        function isMobile() {
+                const filter = "win16|win32|win64|mac|macintel";
+                if (navigator.platform) {
+                        if (filter.indexOf(navigator.platform.toLowerCase()) < 0) {
+                                return true
+                        }
+                        return false
+                }
+        }
+</script>
+</head>
+<body>
+        홈즈Y 꿈쟁이.요셉 <br />연결완료 창을 닫아주세요.
+
+
+
+
+</body>
+</html>
